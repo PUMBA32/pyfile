@@ -8,7 +8,6 @@
 '''
 
 import os
-import sys
 import datetime
 
 from typing import (
@@ -16,8 +15,14 @@ from typing import (
     Any, 
     Dict, 
     Optional,
-    Union
+    Union,
+    Tuple
 )
+
+
+def check_var(var: Any, types: Union[Any, Tuple[Any]], text: str = None) -> None: 
+    if not isinstance(var, types):
+        raise ValueError("Type of variable error." if not text else text)
 
 
 class FileInfo:
@@ -25,9 +30,7 @@ class FileInfo:
     def get_size(filepath: str) -> int:
         '''Получение размера файла в байтах'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.") 
+        check_var(filepath, str, "Type of filepath error.")
 
         return os.path.getsize(filepath)
     
@@ -36,9 +39,7 @@ class FileInfo:
     def get_letters_count(lines: Union[str, List[str]]) -> int: 
         '''Получение количества символов строки или массива строк'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(lines, (str, list)):
-            raise ValueError("Type of lines error.")
+        check_var(lines, (str, list), "Type of lines error.") 
         
         return len(lines) if isinstance(lines, str) else sum(len(line) for line in lines)
 
@@ -47,9 +48,7 @@ class FileInfo:
     def get_date_of_creating(filepath: str) -> str: 
         '''Получение даты создания файла'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.") 
+        check_var(filepath, str, "Type of filepath error.") 
         
         creation_time = int(os.path.getctime(filepath))
         creation_date = datetime.datetime.fromtimestamp(creation_time).strftime("%d/%m/%Y, %H:%M:%S")
@@ -60,13 +59,8 @@ class FileInfo:
     def get_lines(filepath: str, encoding: bool = True) -> List[str]: 
         '''Получение списка строчек в файле'''
         
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.")
-        
-        # Проверка на корректность данных encoding
-        if not isinstance(encoding, (bool, type(None))):
-            raise ValueError("Type of encoding value error.")
+        check_var(filepath, str, "Type of filepath error.")        
+        check_var(encoding, (bool, type(None)), "Type of encoding value error.")
         
         try:
             with open(filepath, "r", encoding='utf-8' if encoding else None) as file: 
@@ -82,18 +76,10 @@ class File:
     @staticmethod
     def create(filepath: str, data: Union[str, List[str]] = None, encoding: bool = True) -> Dict[str, Union[str, int]]: 
         '''Создание нового файла'''
-
-        # Проверка на корректность типа данных сохраняемого текста
-        if not isinstance(data, (str, list)):
-            raise ValueError("Type of data error.")
-
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.")
         
-        # Проверка на корректность данных encoding
-        if not isinstance(encoding, (bool, type(None))):
-            raise ValueError("Type of encoding value error.")
+        check_var(data, (str, list), "Type of data error.")
+        check_var(filepath, str, "Type of filepath error.")        
+        check_var(encoding, (bool, type(None)), "Type of encoding value error.")
 
         try:
             if not os.path.exists(filepath):  # Если файла не существует
@@ -132,13 +118,8 @@ class File:
     def read(filepath: str, encoding: bool = True) ->  List[str]:
         '''Читает файл и возращает строку с его содержимым'''
         
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.")
-        
-        # Проверка на корректность данных encoding
-        if not isinstance(encoding, (bool, type(None))):
-            raise ValueError("Type of encoding value error.")
+        check_var(filepath, str, "Type of filepath error.")
+        check_var(encoding, bool, "Type of encoding value error.")
 
         try:
             with open(filepath, "r+", encoding='utf-8' if encoding else None) as file:
@@ -153,9 +134,7 @@ class File:
     def delete(filepath: str) -> None:
         '''Удаление файла'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.")
+        check_var(filepath, str, "Type of filepath error.")
 
         try:
             os.remove(filepath)
@@ -171,9 +150,7 @@ class File:
     def get_info(filepath: str) -> Dict[str, Union[str, List[str], int]]:
         '''Получение информации о файле'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(filepath, str):
-            raise ValueError("Type of filepath error.")
+        check_var(filepath, str, "Type of filepath error.")
         
         lines: List[str] = FileInfo.get_lines(filepath)
 
@@ -190,9 +167,7 @@ class Folder:
     def create(folderpath: str) -> Dict[str, Union[str, str]]:
         '''Создание папки по указанному пути'''
 
-        # Проверка на корректность данных пути до файла
-        if not isinstance(folderpath, str):
-            raise ValueError("Type of folderpath variable error.")
+        check_var(folderpath, str, "Type of folderpath error.")
 
         try:
             os.makedirs(folderpath, exist_ok=True)
@@ -206,31 +181,36 @@ class Folder:
 
     @staticmethod
     def info(folderpath: str) -> Dict[str, Union[str, List[str], int]]:
+        '''Возвращает кортеж с информацией про папку'''
         
-        # Проверка на корректность данных пути до файла
-        if not isinstance(folderpath, str):
-            raise ValueError("Type of folderpath variable error.")
-
-        
+        check_var(folderpath, str, "Type of folderpath error.")
 
 
     @staticmethod
     def delete(folderpath: str) -> None:
-        os.rmdir(folderpath)
+        '''Удаляет папку'''
+
+        check_var(folderpath, str, "Type of folderpath error.")
 
 
     @staticmethod
     def get_files_count(folderpath: str) -> int:
-        ...
+        '''Получение количества файлов в директории'''
+        
+        check_var(folderpath, str, "Type of folderpath error.")
+
+        return len(os.listdir(folderpath))
 
 
     @staticmethod
     def get_list_of_files(folderpath: str) -> Optional[List[str]]:
-        os.listdir(folderpath)
+        '''Получение списка файлов из папки'''
+        
+        check_var(folderpath, str, "Type of folderpath error.")
+
+        return os.listdir(folderpath)
 
 
 
 if __name__ == '__main__':
-    path = "D:\\Coding\\PYTHON\\big_projects\\begginer_projects_list\\PyConsole\\PyConsole\\data.txt"
-    # _ = File.create(path, 'niggers\niggers')
-    print(File.read(path))
+    ...
