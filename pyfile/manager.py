@@ -15,9 +15,6 @@ def check_var(var: Any, types: Union[type, Tuple[type, ...]], text: str = None) 
         raise ValueError("Type of variable error." if not text else text)
 
 
-class FolderInfo: ...
-class FileInfo: ...
-
 class FileManager: 
     __BASE_PATH: str = os.path.dirname(__file__)
 
@@ -56,6 +53,8 @@ class FileManager:
     
     @staticmethod
     def delete(fullpath: str) -> None:
+        '''Deletes the file by path.'''
+
         check_var(fullpath, str)
 
         try:
@@ -66,12 +65,22 @@ class FileManager:
             raise FileNotFoundError("Filepath is incorrect.")
         except Exception as ex:
             raise Exception(f"File deleting failed: {ex}")
-        
+
     
-    @classmethod
+    @staticmethod
+    def read(fullpath: str, encoding: bool = True) -> List[str]:
+        '''Reads the file by filepath and returns the list of strokes from this file.'''
 
+        check_var(fullpath, str)
+        check_var(encoding, bool)
 
-
+        try: 
+            with open(fullpath, 'r', encoding='utf-8' if encoding else None) as file:
+                return file.readlines()
+        except FileNotFoundError:
+            raise FileNotFoundError("Filepath is incorrect.")
+        except Exception as ex:
+            raise Exception(f"File deleting failed: {ex}") 
 
 
 class FolderManager: ...
