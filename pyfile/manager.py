@@ -81,13 +81,32 @@ class FileManager:
             raise FileNotFoundError("Filepath is incorrect.")
         except Exception as ex:
             raise Exception(f"File deleting failed: {ex}") 
+        
+
+    @staticmethod
+    def get_date_of_creating(filepath: str) -> str: 
+        check_var(filepath, str)
+
+        creation_time = os.path.getctime(filepath)
+        return datetime.datetime.fromtimestamp(creation_time).strftime("%d/%m/%Y, %H:%M:%S")
 
 
-class FolderManager: ...
+    @staticmethod
+    def get_count_of_lines(filepath: str) -> int:
+        return len(FileManager.read(filepath))
+        
+
+
+class FolderManager: 
+    __BASE_PATH = os.path.dirname(__file__)
+
+    
+    @staticmethod
+    def create(filepath: str) -> None: ...
 
 
 if __name__ == '__main__':
-    from time import sleep
-
+    # from time import sleep
+    print(FileManager.get_date_of_creating("D:\\Coding\\PYTHON\\big_projects\\pyfile\\anus.txt"))
     # path: str = FileManager.create("data.txt", data=['some data\n', 'another data'])    
     # FileManager.delete(path)
