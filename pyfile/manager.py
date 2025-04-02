@@ -106,6 +106,8 @@ class FileManager:
 
     @staticmethod
     def clear(filepath: str) -> None:
+        '''Clearing all content in the file.'''
+
         check_var(filepath, str)
 
         try:
@@ -152,25 +154,93 @@ class FileManager:
             raise FileNotFoundError(f"File not found by {filepath} path.")
         except Exception as ex:
             raise Exception(f"Getting file size was failed: {ex}") 
+        
+
+class File:
+    __BASE_PATH: str = os.path.dirname(__file__)
+
+
+    def __init__(self, name: str, 
+               data: Optional[List[str]] = None, 
+               filepath: Optional[str] = None, 
+               encoding: bool = True):
+        
+        # Проверка параметров функции на валидность типов данных
+        check_var(name, str)
+        check_var(filepath, (str, type(None)))
+        check_var(data, (list, type(None)))
+        check_var(encoding, bool)
+        
+        self._filepath: str = os.path.join(self.__BASE_PATH, name) if not filepath else filepath
+        self._start_data: Optional[List[str]] = data
+
+        try:
+            with open(self._filepath, 'w', encoding='utf-8' if encoding else None) as file:
+                if data:
+                    for line in self._start_data:
+                        file.write(line+'\n')
+        except FileNotFoundError:
+            raise FileNotFoundError("Wrong file path.")
+        except Exception as ex:
+            raise Exception(f"File init failed: {ex}")
+        
+    
+    def __str__(self) -> str:
+        return f'''filepath: {self._filepath}\nrows: {self.get_lines_count()}\nsize: {self.get_size()}\ncreating date: {self.get_date()}'''
+
+# ===================== GETTERS =================================
+
+    def get_size(self) -> int:
+        '''Returns size in bytes of current file.'''
+
+        return FileManager.get_size(self._filepath)
+    
+    
+    def get_lines_count(self) -> int:
+        '''Returns count of lines in current file.'''
+
+        return FileManager.get_lines_count(self._filepath)
+
+
+    def get_data(self) -> List[str]:
+        '''Returns date of creating this file.'''
+
+        return FileManager.read(self._filepath)
+    
+
+    def get_filepath(self) -> str:
+        '''Returns full path before file.'''
+        
+        return self._filepath
+    
+
+    def get_date(self) -> str:
+        '''Returns date of current file creating in string type.'''
+
+        return FileManager.get_date(self._filepath)
+
+# ============================================================
+
+
+    def add(self, data: List[str]) -> None:
+        '''Adds new lines of data into current file.'''
+
+        FileManager.add(self._filepath, data)
+
+    
+    def clear(self) -> None:
+        '''Clears whole data in current file.'''
+
+        FileManager.clear(self._filepath)
+
+    
+    def read(self) -> List[str]:
+        '''Return lines of data that contents current file.'''
+
+        return FileManager.read(self._filepath)
+
 
 
 if __name__ == '__main__':
-    # from time import sleep
-    # fl = FileManager
-
-    # path = fl.create('data.txt', data=['niggers', 'niggers'])
-    
-    # fl.add(path, ['niggers3'])
-
-    # print(fl.get_lines_count(path))
-
-    # fl.clear(path)
-
-    # print(fl.get_lines_count(path))
-
-    # print(fl.get_size(path))
-    # print(fl.get_date(path))
-
-    # fl.add(path, ['niggers'])
-    
+    # for testing functions
     pass
