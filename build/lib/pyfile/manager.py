@@ -1,7 +1,6 @@
 import os, datetime, inspect
 
-from errors import ValidationException
-
+from pathlib import Path
 
 from typing import (
     List, 
@@ -14,10 +13,15 @@ from typing import (
 
 def check_var(var: Any, types: Union[type, Tuple[type, ...]], text: str = None) -> None: 
     if not isinstance(var, types):
-        raise ValidationException("Type of variable error." if not text else text)
+        raise ValueError("Type of variable error." if not text else text)
 
 
 class FileManager: 
+    stack = inspect.stack()
+    caller_frame = stack[1]
+
+
+
     @classmethod
     def create(cls, 
                filepath: str, 
@@ -188,6 +192,12 @@ class File:
 
         return FileManager.get_lines_count(self._filepath)
 
+
+    def get_data(self) -> List[str]:
+        '''Returns date of creating this file.'''
+
+        return FileManager.read(self._filepath)
+    
 
     def get_filepath(self) -> str:
         '''Returns full path before file.'''
