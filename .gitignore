@@ -1,2 +1,3 @@
 /.venv/
+/pyfile/__pycache__/
 setup.py
