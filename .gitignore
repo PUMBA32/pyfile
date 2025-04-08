@@ -1,3 +1,6 @@
 /.venv/
 pyfile/__pycache__/
 setup.py
+/build/
+/dist/
+/pyfile_lib.egg-info/
